@@ -5,7 +5,7 @@ import { TenantProvider } from '@/contexts/TenantContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import LoginPage from '@/pages/auth/LoginPage';
-import { DashboardPage } from '@/pages/dashboard/DashboardPage'; // ✅ Named import
+import DashboardPage from '@/pages/dashboard/DashboardPage'; // ✅ Default import
 
 // Simple loading component
 const LoadingSpinner = () => (
@@ -16,7 +16,7 @@ const LoadingSpinner = () => (
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
-  // Replace this with your auth logic later
+  // Add auth logic here later if needed
   // Example:
   // const { user } = useAuth();
   // if (!user) return <Navigate to="/auth/login" replace />;
@@ -34,8 +34,10 @@ function App() {
                 {/* Public Routes */}
                 <Route path="/auth/login" element={<LoginPage />} />
 
-                {/* Protected Routes */}
+                {/* Redirect root to dashboard */}
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+                {/* Protected Routes */}
                 <Route
                   path="/dashboard"
                   element={
