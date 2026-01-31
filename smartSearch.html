@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    function loadOptions() {
+      google.script.run.withSuccessHandler(function(options) {
+        var dropdownList = document.getElementById("dropdownList");
+        dropdownList.innerHTML = "";
+        options.forEach(function(option) {
+          var item = document.createElement("a");
+          item.className = "dropdown-item";
+          item.textContent = option;
+          item.onclick = function() {
+            selectValue(option);
+          };
+          dropdownList.appendChild(item);
+        });
+      }).getSmartOptions();
+    }
+
+    function filterOptions() {
+      var input = document.getElementById("searchInput");
+      var filter = input.value.toUpperCase();
+      var items = document.getElementsByClassName("dropdown-item");
+      for (var i = 0; i < items.length; i++) {
+        var txtValue = items[i].textContent || items[i].innerText;
+        items[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+      }
+    }
+
+    function selectValue(value) {
+      google.script.run.setSmartValue(value);
+      google.script.host.close();
+    }
+
+    window.onload = loadOptions;
+  </script>
+  
+  <style>
+    #dropdownContainer {
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      width: 200px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+
+    .dropdown-item {
+      padding: 5px;
+      cursor: pointer;
+      display: block;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Rechercher...">
+  <div id="dropdownContainer">
+    <div id="dropdownList"></div>
+  </div>
+</body>
+</html>
+
