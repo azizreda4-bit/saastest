@@ -1,11 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { TenantProvider } from '@/contexts/TenantContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import LoginPage from '@/pages/auth/LoginPage';
-import DashboardPage from '@/pages/dashboard/DashboardPage';
+import { DashboardPage } from '@/pages/dashboard/DashboardPage'; // ✅ Named import
 
 // Simple loading component
 const LoadingSpinner = () => (
@@ -14,9 +14,12 @@ const LoadingSpinner = () => (
   </div>
 );
 
-// Simple protected route component
+// Protected route component
 const ProtectedRoute = ({ children }) => {
-  // For now, just render children - we'll add auth logic later
+  // Replace this with your auth logic later
+  // Example:
+  // const { user } = useAuth();
+  // if (!user) return <Navigate to="/auth/login" replace />;
   return children;
 };
 
@@ -30,29 +33,40 @@ function App() {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/auth/login" element={<LoginPage />} />
-                
+
                 {/* Protected Routes */}
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <DashboardLayout>
-                      <DashboardPage />
-                    </DashboardLayout>
-                  </ProtectedRoute>
-                } />
-                
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardLayout>
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <DashboardPage />
+                        </Suspense>
+                      </DashboardLayout>
+                    </ProtectedRoute>
+                  }
+                />
+
                 {/* 404 Page */}
-                <Route path="*" element={
-                  <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                    <div className="text-center">
-                      <h1 className="text-4xl font-bold text-gray-900">404</h1>
-                      <p className="text-gray-600">Page non trouvée</p>
-                      <a href="/dashboard" className="text-blue-600 hover:text-blue-500">
-                        Retour au tableau de bord
-                      </a>
+                <Route
+                  path="*"
+                  element={
+                    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                      <div className="text-center">
+                        <h1 className="text-4xl font-bold text-gray-900">404</h1>
+                        <p className="text-gray-600">Page non trouvée</p>
+                        <Link
+                          to="/dashboard"
+                          className="text-blue-600 hover:text-blue-500"
+                        >
+                          Retour au tableau de bord
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                } />
+                  }
+                />
               </Routes>
             </div>
           </Router>
